@@ -6,7 +6,9 @@ public class PhoneInfo {
 	String phoneNumber;
 	String birthday;
 	
-	public PhoneInfo() {}
+	public PhoneInfo() {
+		
+	}
 
 	public PhoneInfo(String name, String phoneNumber) {
 		super();

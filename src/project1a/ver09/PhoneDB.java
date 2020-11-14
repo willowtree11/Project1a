@@ -43,7 +43,7 @@ public class PhoneDB {
 						"jdbc:oracle:thin://@localhost:1521:orcl",
 						"kosmo",
 						"1234");
-				System.out.println("오라클 DB연결 성공");						
+				System.out.println("오라클 DB연결 성공");
 		} 
 		catch (ClassNotFoundException e) {
 			//ojdbc6.jar 파일이 없거나 연동되지 않았을 때 예외 발생

@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class PhoneBookManager implements Serializable{ 
 	
-	HashSet<PhoneInfo> hs = new HashSet<PhoneInfo>(); //데이터를 저장할 해시셋 생성
+	static HashSet<PhoneInfo> hs = new HashSet<PhoneInfo>(); //데이터를 저장할 해시셋 생성
 	Scanner scan=new Scanner(System.in);	
 	
 	public void printMenu() { //메뉴
@@ -228,32 +228,51 @@ public class PhoneBookManager implements Serializable{
 			System.out.println("저장 오류");
 		}		
 	}
-		
+	
+	AutoSaverT autoS;
+	boolean isActive=false; //실행중인지?
 	public void saveStart(){ //class AutoSaverT 실행용 메소드		
-		AutoSaverT autoS=new AutoSaverT(); //saveStart를 실행할 때 마다 생성되고있음..
-//		System.out.println(autoS); 
-//		isAlive(); //boolean 메소드, 쓰레드가 시작되었고 아직 끝나지 않았으면 true 끝났으면 false 반환
+		
+//		System.out.println("1.자동저장ON 2.자동저장Off");
+//		int save = scan.nextInt();
+//		scan.nextLine();
+//		if(save==1) {
+//			if(autoS.isAlive()) {
+//				System.out.println("이미 자동저장이 실행중입니다.\n");
+//				return;
+//			}
+//			autoS= new AutoSaverT();
+//			System.out.println(autoSaverT);
+//			autoS.setDaemon(true);
+//			autoS.start();
+//		}
+//		else if(save==2) {
+//			System.out.println("자동저장 종료\n");
+//			System.out.println(autoSaverT);
+//			autoS.interrupt();
+//			
+//		}
+
 		System.out.println("==저장옵션선택==\n"
 				+ "저장옵션을 선택하세요.\n"
 				+ "1.자동저장On, 2.자동저장Off\n"
 				+ "선택: ");
-		autoS.setDaemon(true);
-		autoS.setName("Daemon");
+		
 		Scanner scan=new Scanner(System.in);
 		int sChoice=scan.nextInt(); //sub 메뉴 선택지를 받을 scanner
 		scan.nextLine();
 		try {	
-			if(!(sChoice>0&&sChoice<3)) {
-				System.out.println("숫자 1, 2 중에서 선택하세요");
-			}
-			else if(sChoice==1) {//1. 자동저장On				
-				if(autoS.isAlive()) {
+			if(sChoice==1) {//1. 자동저장On				
+				if(isActive==true) { //오토세이브 스레드가 실행중이면 autoS.isAlive()
 					System.out.println("자동저장이 이미 실행중입니다.");
+					return;
 				}
 				else {
 					try {
-						dataSave();
-						autoS.start(); //데몬쓰레드	
+						isActive=true;
+						autoS=new AutoSaverT();
+						autoS.setDaemon(isActive);
+						autoS.start(); //데몬쓰레드	실행
 					} 
 					catch (Exception e) {	
 						System.out.println("쓰레드 실행 오류");
@@ -261,18 +280,25 @@ public class PhoneBookManager implements Serializable{
 					}
 				}	
 			}
-			else {//2.자동저장Off	
+			else if(sChoice==2){//2.자동저장Off	
 				try {					
 					autoS.interrupt();
 					System.out.println("자동저장을 중지합니다.");
 				} 
 				catch(Exception e) {
 					System.out.println("자동 저장 종료 예외 발생");
+					System.out.println(e);
 				}	
-			}//2.자동저장Off	
+			}
+			else { //선택지 숫자 잘못씀 (!(sChoice>0&&sChoice<3))
+			System.out.println("숫자 1, 2 중에서 선택하세요");
+			}
+			
 		} //try 자동저장 on/off 선택지
 		catch (Exception e) {
 			System.out.println("자동 저장 예외 발생");
+			System.out.println(e);
+			e.getStackTrace();
 		}
 	}
 	
